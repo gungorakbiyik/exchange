@@ -42,4 +42,7 @@ public class ExchangeEndpoint {
         return new ExchangeApiResponse<>(exchangeService.conversion(request.getRequestBody()));
     }
 
+
+
+
 }
