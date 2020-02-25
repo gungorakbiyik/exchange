@@ -59,4 +59,9 @@ public class ExchangeServiceImpl implements ExchangeService {
 
         return new ConversionResponse(convertedAmount, rec.getId());
     }
+
+    @Override
+    public void conversionList() {
+
+    }
 }

@@ -15,4 +15,6 @@ public interface ExchangeService {
     Double exchangeRate(CurrencyPair currencyPair);
 
     ConversionResponse conversion(ConversionRequest conversionRequest);
+
+    void conversionList();
 }

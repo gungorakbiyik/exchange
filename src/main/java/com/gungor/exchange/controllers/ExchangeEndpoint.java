@@ -41,8 +41,4 @@ public class ExchangeEndpoint {
     public ExchangeApiResponse<ConversionResponse> conversion(@RequestBody ExchangeApiRequest<ConversionRequest> request) {
         return new ExchangeApiResponse<>(exchangeService.conversion(request.getRequestBody()));
     }
-
-
-
-
 }
