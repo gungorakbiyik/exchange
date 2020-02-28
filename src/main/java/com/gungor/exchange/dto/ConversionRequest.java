@@ -1,18 +1,12 @@
 package com.gungor.exchange.dto;
 
-public class ConversionRequest {
-    private CurrencyPair currencyPair;
+import javax.validation.constraints.DecimalMin;
+
+public class ConversionRequest extends CurrencyPair {
+    @DecimalMin("0.01")
     private Double amount;
 
     public ConversionRequest() {
-    }
-
-    public CurrencyPair getCurrencyPair() {
-        return currencyPair;
-    }
-
-    public void setCurrencyPair(CurrencyPair currencyPair) {
-        this.currencyPair = currencyPair;
     }
 
     public Double getAmount() {
@@ -25,8 +19,9 @@ public class ConversionRequest {
 
     @Override
     public String toString() {
-        return "ConversionDto{" +
-                "currencyPair=" + currencyPair +
+        return "ConversionRequest{" +
+                "baseCurrency='" + getBaseCurrency() + '\'' +
+                ", targetCurrency='" + getTargetCurrency() + '\'' +
                 ", amount=" + amount +
                 '}';
     }

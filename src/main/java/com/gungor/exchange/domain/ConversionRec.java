@@ -6,7 +6,9 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "conversion_records")
+@Table(name = "conversion_records",
+indexes = {@Index(name = "idx_trx_date", columnList = "transaction_date", unique = false)}
+)
 public class ConversionRec {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_id_generator")
@@ -17,7 +19,7 @@ public class ConversionRec {
     private Double amount;
     private Double convertedAmount;
     private Double rate;
-    @Column(nullable = false, updatable = false)
+    @Column(name = "transaction_date", nullable = false, updatable = false)
     @CreationTimestamp
     private Date transactionDate;
 

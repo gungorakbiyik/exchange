@@ -1,16 +1,21 @@
 package com.gungor.exchange.services;
 
 import com.gungor.exchange.domain.ConversionRec;
-import com.gungor.exchange.dto.ConversionRequest;
-import com.gungor.exchange.dto.ConversionResponse;
-import com.gungor.exchange.dto.CurrencyPair;
+import com.gungor.exchange.dto.*;
+import com.gungor.exchange.error.ConversionNotFoundException;
 import com.gungor.exchange.integrations.ExchangeServiceProvider;
 import com.gungor.exchange.repositories.ConversionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ExchangeServiceImpl implements ExchangeService {
-
+    private Logger log = LoggerFactory.getLogger(ExchangeServiceImpl.class);
     private final ExchangeServiceProvider provider;
     private final ConversionRepository conversionRepo;
 
@@ -46,12 +51,12 @@ public class ExchangeServiceImpl implements ExchangeService {
 
     @Override
     public ConversionResponse conversion(ConversionRequest conversionRequest) {
-        Double rate = exchangeRate(conversionRequest.getCurrencyPair().getBaseCurrency(), conversionRequest.getCurrencyPair().getTargetCurrency());
+        Double rate = exchangeRate(conversionRequest.getBaseCurrency(), conversionRequest.getTargetCurrency());
         Double convertedAmount = calc(rate, conversionRequest.getAmount());
 
         ConversionRec rec = new ConversionRec();
-        rec.setBaseCurrency(conversionRequest.getCurrencyPair().getBaseCurrency());
-        rec.setTargetCurrency(conversionRequest.getCurrencyPair().getTargetCurrency());
+        rec.setBaseCurrency(conversionRequest.getBaseCurrency());
+        rec.setTargetCurrency(conversionRequest.getTargetCurrency());
         rec.setAmount(conversionRequest.getAmount());
         rec.setRate(rate);
         rec.setConvertedAmount(convertedAmount);
@@ -61,7 +66,32 @@ public class ExchangeServiceImpl implements ExchangeService {
     }
 
     @Override
-    public void conversionList() {
-        //
+    public PageDto<List<ConversionRec>> conversionList(ConversionListRequest request) {
+        PageRequest pageRequest = PageRequest.of(0, 5);
+        if (request.getPage()!= null) {
+            pageRequest = PageRequest.of(request.getPage().getPage(), request.getPage().getSize());
+        }
+
+        Page<ConversionRec> page = conversionRepo.findByIdAndStartDateAndEndDate(request.getTransactionId(),
+                request.getStartDate(), request.getEndDate(),
+                pageRequest);
+
+        if (page.getNumberOfElements() == 0) {
+            throw new ConversionNotFoundException(request.getTransactionId(), request.getStartDate(), request.getEndDate());
+        }
+
+        PageDto<List<ConversionRec>> pageData = new PageDto<List<ConversionRec>>(page.getContent(),
+                page.getTotalElements(), page.getTotalPages(), page.getNumberOfElements(), page.getNumber());
+
+        log.info("totalElements: {}, totalPages: {}, number: {}, numberOfElements: {}, content: {}",
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.getNumber(),
+                page.getNumberOfElements(),
+                page.getContent()
+                );
+        return pageData;
     }
+
+
 }

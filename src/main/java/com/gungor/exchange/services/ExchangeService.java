@@ -1,8 +1,9 @@
 package com.gungor.exchange.services;
 
-import com.gungor.exchange.dto.ConversionRequest;
-import com.gungor.exchange.dto.ConversionResponse;
-import com.gungor.exchange.dto.CurrencyPair;
+import com.gungor.exchange.domain.ConversionRec;
+import com.gungor.exchange.dto.*;
+
+import java.util.List;
 
 public interface ExchangeService {
 
@@ -16,5 +17,5 @@ public interface ExchangeService {
 
     ConversionResponse conversion(ConversionRequest conversionRequest);
 
-    void conversionList();
+    PageDto<List<ConversionRec>> conversionList(ConversionListRequest request);
 }

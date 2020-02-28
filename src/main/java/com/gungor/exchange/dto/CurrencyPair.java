@@ -1,8 +1,14 @@
 package com.gungor.exchange.dto;
 
+import com.gungor.exchange.validators.Currency;
+
 public class CurrencyPair {
 
+
+    @Currency(message = "invalid base currency")
     private String baseCurrency;
+
+    @Currency(message = "invalid target currency")
     private String targetCurrency;
 
     public CurrencyPair() {
